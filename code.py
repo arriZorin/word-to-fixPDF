@@ -4,6 +4,7 @@ from PIL import Image
 import img2pdf
 import os
 from pathlib import Path
+from pdf2image import convert_from_path
 
 try:
     import comtypes.client as comtypes
@@ -15,12 +16,14 @@ def open_file_dialog():
     root = tk.Tk()
     root.withdraw()  # Hide the main window
     file_path = filedialog.askopenfilename(filetypes=[("Word Files", "*.doc *.docx")])
+    print(file_path)
     return file_path
 
 # Convert Word file to images and return list of image paths
 def convert_word_to_images(file_path):
     images = []
     output_dir = Path(file_path).parent / "temp_images"
+    print(output_dir)
     output_dir.mkdir(exist_ok=True)
 
     if file_path.endswith('.docx'):
@@ -28,6 +31,7 @@ def convert_word_to_images(file_path):
         pdf_path = output_dir / "temp_pdf.pdf"
         convert(file_path, pdf_path)
     elif file_path.endswith('.doc') and comtypes:
+        print("this doc 2003 file format")
         word = comtypes.CreateObject("Word.Application")
         word.Visible = False
         doc = word.Documents.Open(file_path)
@@ -39,7 +43,6 @@ def convert_word_to_images(file_path):
         raise ValueError("Only .doc and .docx files are supported.")
 
     # Convert PDF pages to images
-    from pdf2image import convert_from_path
     images = convert_from_path(pdf_path, dpi=300, output_folder=output_dir, fmt="png")
     return [str(image.filename) for image in images]
 

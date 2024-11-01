@@ -28,10 +28,20 @@ wheels = [
 ]
 
 [[package]]
+name = "comtypes"
+version = "1.4.8"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/17/c3/9ca662355cb2322d4a015ca3995f7b0763f822c7473d19eef2dc9225db5f/comtypes-1.4.8.zip", hash = "sha256:bb2286cfb3b96f838307200a85b00b98e1bdebf1e58ec3c28b36b1ccfafac01f", size = 254260 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/f5/9f/5fe518644455a4a806a9aff528f201e3103b95cec48c1802d118dc55cf67/comtypes-1.4.8-py3-none-any.whl", hash = "sha256:773109b12aa0bec630d5b2272dd983cbaa25605a12fc1319f99730c9d0b72f79", size = 229405 },
+]
+
+[[package]]
 name = "convert-to-pdf"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
+    { name = "comtypes" },
     { name = "docx2pdf" },
     { name = "fpdf" },
     { name = "img2pdf" },
@@ -42,6 +52,7 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
+    { name = "comtypes", specifier = ">=1.4.8" },
     { name = "docx2pdf", specifier = ">=0.1.8" },
     { name = "fpdf", specifier = ">=1.7.2" },
     { name = "img2pdf", specifier = ">=0.5.1" },
