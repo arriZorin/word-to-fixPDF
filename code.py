@@ -25,18 +25,21 @@ def convert_word_to_images(file_path):
     output_dir = Path(file_path).parent / "temp_images"
     print(output_dir)
     output_dir.mkdir(exist_ok=True)
+    
+    # Ensure the file path is in the correct format for comtypes and Windows
+    file_path = Path(file_path).resolve(strict=True)
 
-    if file_path.endswith('.docx'):
+    if file_path.suffix == '.docx':
         from docx2pdf import convert
         pdf_path = output_dir / "temp_pdf.pdf"
-        convert(file_path, pdf_path)
-    elif file_path.endswith('.doc') and comtypes:
+        convert(str(file_path), str(pdf_path))
+    elif file_path.suffix == '.doc' and comtypes:
         print("this doc 2003 file format")
         word = comtypes.CreateObject("Word.Application")
         word.Visible = False
-        doc = word.Documents.Open(file_path)
+        doc = word.Documents.Open(str(file_path))  # Convert Path to string
         pdf_path = output_dir / "temp_pdf.pdf"
-        doc.SaveAs(pdf_path, FileFormat=17)
+        doc.SaveAs(str(pdf_path), FileFormat=17)
         doc.Close()
         word.Quit()
     else:
