@@ -16,14 +16,13 @@ except ImportError:
 def open_file_dialog():
     root = tk.Tk()
     root.withdraw()  # Hide the main window
-    file_path = filedialog.askopenfilename(filetypes=[("Word Files", "*.doc *.docx")])
-    return file_path
+    file_path = filedialog.askopenfilenames(filetypes=[("Word Files", "*.doc *.docx")])
+    return list(file_path)
 
 # Convert Word file to images and return list of image paths
 def convert_word_to_images(file_path):
     images = []
     output_dir = Path(file_path).parent / "temp_images"
-    print(output_dir)
     output_dir.mkdir(exist_ok=True)
     
     # Ensure the file path is in the correct format for comtypes and Windows
@@ -57,19 +56,25 @@ def images_to_pdf(images, output_path):
 def main():
     # Step 1: Open file dialog to choose a Word file
     word_file = open_file_dialog()
+    # print(word_file)
+    # sleep(10)
+    # return
+    
     if not word_file:
         print("No file selected.")
         return
 
-    # Step 2: Convert Word to images and get paths of images
-    images = convert_word_to_images(word_file)
-    
-    # Step 3: Convert all images to a single PDF
-    original_file = Path(word_file)
-    output_pdf = original_file.with_name(original_file.stem + "_new.pdf")
-    images_to_pdf(images, output_pdf)
+    for x, y in enumerate(word_file):
+        # Step 2: Convert Word to images and get paths of images
+        images = convert_word_to_images(y)
+        
+        # Step 3: Convert all images to a single PDF
+        original_file = Path(y)
+        output_pdf = original_file.with_name(original_file.stem + ".pdf")
+        images_to_pdf(images, output_pdf)
 
-    print(f"PDF saved as: {output_pdf} \n\n--------- Finished ---------")
+        print(f"{x+1}/{len(word_file)} PDF saved as: {output_pdf}")
+    print("\n--------- Finished ---------")
     sleep(2)
 
 # Run the script
