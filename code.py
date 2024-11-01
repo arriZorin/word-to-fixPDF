@@ -3,6 +3,7 @@ from tkinter import filedialog
 from PIL import Image
 import img2pdf
 import os
+from time import sleep
 from pathlib import Path
 from pdf2image import convert_from_path
 
@@ -16,7 +17,6 @@ def open_file_dialog():
     root = tk.Tk()
     root.withdraw()  # Hide the main window
     file_path = filedialog.askopenfilename(filetypes=[("Word Files", "*.doc *.docx")])
-    print(file_path)
     return file_path
 
 # Convert Word file to images and return list of image paths
@@ -34,7 +34,6 @@ def convert_word_to_images(file_path):
         pdf_path = output_dir / "temp_pdf.pdf"
         convert(str(file_path), str(pdf_path))
     elif file_path.suffix == '.doc' and comtypes:
-        print("this doc 2003 file format")
         word = comtypes.CreateObject("Word.Application")
         word.Visible = False
         doc = word.Documents.Open(str(file_path))  # Convert Path to string
@@ -70,7 +69,8 @@ def main():
     output_pdf = original_file.with_name(original_file.stem + "_new.pdf")
     images_to_pdf(images, output_pdf)
 
-    print(f"PDF saved as: {output_pdf}")
+    print(f"PDF saved as: {output_pdf} \n\n--------- Finished ---------")
+    sleep(2)
 
 # Run the script
 if __name__ == "__main__":
