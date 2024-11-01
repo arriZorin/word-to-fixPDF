@@ -1,0 +1,69 @@
+import os
+from tkinter import Tk, filedialog
+from docx import Document
+from docx2pdf import convert
+from PIL import Image
+from pdf2image import convert_from_path
+from fpdf import FPDF
+
+def choose_file():
+    # Open file dialog to select a Word document
+    Tk().withdraw()  # Hide the root window
+    file_path = filedialog.askopenfilename(title="Select MS Word file", filetypes=[("Word files", "*.docx")])
+    return file_path
+
+def convert_docx_to_pdf(docx_path):
+    # Convert Word document to PDF
+    pdf_path = docx_path.replace('.docx', '_temp.pdf')
+    convert(docx_path, pdf_path)
+    return pdf_path
+
+def pdf_to_images(pdf_path):
+    # Convert PDF pages to images
+    images = convert_from_path(pdf_path)
+    image_paths = []
+    for i, image in enumerate(images):
+        img_path = pdf_path.replace('_temp.pdf', f'_page_{i + 1}.png')
+        image.save(img_path, 'PNG')
+        image_paths.append(img_path)
+    return image_paths
+
+def images_to_pdf(image_paths, output_pdf_path):
+    # Convert images to a PDF with pages sized based on original image dimensions
+    pdf = FPDF()
+    for img_path in image_paths:
+        with Image.open(img_path) as img:
+            width, height = img.size
+            width, height = width * 0.264583, height * 0.264583  # Convert pixels to mm
+            pdf.add_page(format=(width, height))
+            pdf.image(img_path, 0, 0, width, height)
+    pdf.output(output_pdf_path)
+
+def main():
+    # Main workflow
+    docx_path = choose_file()
+    if not docx_path:
+        print("No file selected.")
+        return
+
+    # Get the output filename with "_new"
+    output_pdf_path = docx_path.replace('.docx', '_new.pdf')
+
+    # Step 2: Convert DOCX to PDF
+    temp_pdf_path = convert_docx_to_pdf(docx_path)
+    
+    # Step 3: Convert PDF pages to images
+    image_paths = pdf_to_images(temp_pdf_path)
+    
+    # Step 4 and 5: Convert images to final PDF with automated page sizes
+    images_to_pdf(image_paths, output_pdf_path)
+    
+    # Cleanup temporary files
+    os.remove(temp_pdf_path)
+    for img_path in image_paths:
+        os.remove(img_path)
+    
+    print(f"Output PDF saved as {output_pdf_path}")
+
+if __name__ == "__main__":
+    main()
