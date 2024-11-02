@@ -7,6 +7,7 @@ import shutil
 from time import sleep, perf_counter
 from pathlib import Path
 from pdf2image import convert_from_path
+import win32com.client
 
 try:
     import comtypes.client as comtypes
@@ -37,7 +38,8 @@ def convert_word_to_images(file_path):
         pdf_path = output_dir / "temp_pdf.pdf"
         convert(str(file_path), str(pdf_path))
     elif file_path.suffix == '.doc' and comtypes:
-        word = comtypes.CreateObject("Word.Application")
+        # word = comtypes.CreateObject("Word.Application") #error digunakan di word 64bit
+        word = win32com.client.Dispatch("Word.Application")
         word.Visible = False
         doc = word.Documents.Open(str(file_path))  # Convert Path to string
         pdf_path = output_dir / "temp_pdf.pdf"
