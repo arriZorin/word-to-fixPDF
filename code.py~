@@ -85,7 +85,7 @@ Pilih Kualitas Gambar:
         opt = int(input(txt))
         qlt = int(input(quality))
     except Exception as e:
-        print(f"An error occured: {e}")  
+        print(f"An erroroccured: {e}")  
         print("Please Insert Valid Number!")
         return
     # Step 1: Open file dialog to choose a Word file

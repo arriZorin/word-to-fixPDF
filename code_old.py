@@ -14,7 +14,7 @@ try:
 except ImportError:
     comtypes = None  # Ensure comtypes is installed if working with .doc files
 
-res = [300, 150, 72]
+res = [72, 150, 300]
 
 # Initialize the Tkinter file dialog
 def open_file_dialog():
@@ -29,7 +29,7 @@ def open_file_dialog():
 # Convert Word file to images and return list of image paths
 def convert_word_to_images(file_path, quality):
     images = []
-    output_dir = Path(file_path).parent / "img"
+    output_dir = Path(file_path).parent / "temp_data"
     output_dir.mkdir(exist_ok=True)
     
     # Ensure the file path is in the correct format for comtypes and Windows
@@ -81,13 +81,9 @@ Pilih Kualitas Gambar:
 3. Rendah
 """
     # print welcome text
-    try:
-        opt = int(input(txt))
-        qlt = int(input(quality))
-    except Exception as e:
-        print(f"An error occured: {e}")  
-        print("Please Insert Valid Number!")
-        return
+    opt = int(input(txt))
+    qlt = int(input(quality))
+
     # Step 1: Open file dialog to choose a Word file
     word_file = open_file_dialog()
     if not word_file:
@@ -97,31 +93,44 @@ Pilih Kualitas Gambar:
     start = perf_counter()
     dummy_time = 0
 
-    for x, y in enumerate(word_file):
-        # Delete img folder
-        path = f"{Path(y).parent}\\img"
-        if os.path.exists(path):
-            shutil.rmtree(path)
-        
-        if dummy_time == 0:
-            dummy_time = start
-        # Step 2: Convert Word to images and get paths of images
-        images = convert_word_to_images(y, res[qlt -1])
-        if opt == 2:
-            continue
-        # Step 3: Convert all images to a single PDF
-        original_file = Path(y)
-        output_pdf = original_file.with_name(original_file.stem + "_new.pdf")
-        images_to_pdf(images, output_pdf)
-        middle = perf_counter()
-        print(f"{x+1}/{len(word_file)} PDF saved as: {output_pdf} at {round(middle-dummy_time, 2)} second(s)")
-        dummy_time = middle
-        
-        # Delete img folder
-        if os.path.exists(path):
-            shutil.rmtree(path)
-    end = perf_counter()
-    print(f"Finished at {round(end-start, 2)} second(s)")
+    if opt == 1:
+        for x, y in enumerate(word_file):
+            if dummy_time == 0:
+                dummy_time = start
+            # Step 2: Convert Word to images and get paths of images
+            images = convert_word_to_images(y, res[qlt -1])
+            
+            # Step 3: Convert all images to a single PDF
+            original_file = Path(y)
+            output_pdf = original_file.with_name(original_file.stem + "_new.pdf")
+            images_to_pdf(images, output_pdf)
+            middle = perf_counter()
+            print(f"{x+1}/{len(word_file)} PDF saved as: {output_pdf} at {round(middle-dummy_time, 2)} second(s)")
+            dummy_time = middle
+            path = f"{Path(y).parent}\\temp_data"
+            if os.path.exists(path):
+                shutil.rmtree(path)
+        end = perf_counter()
+        print(f"Finished at {round(end-start, 2)} second(s)")
+    elif opt == 2:
+        for x, y in enumerate(word_file):
+            if dummy_time == 0:
+                dummy_time = start
+            # Step 2: Convert Word to images and get paths of images
+            images = convert_word_to_images(y, res[qlt -1])
+            
+            # Step 3: Convert all images to a single PDF
+            original_file = Path(y)
+            output_pdf = original_file.with_name(original_file.stem + "_new.pdf")
+            images_to_pdf(images, output_pdf)
+            middle = perf_counter()
+            print(f"{x+1}/{len(word_file)} PDF saved as: {output_pdf} at {round(middle-dummy_time, 2)} second(s)")
+            dummy_time = middle
+            path = f"{Path(y).parent}\\temp_data"
+            if os.path.exists(path):
+                shutil.rmtree(path)
+        end = perf_counter()
+        print(f"Finished at {round(end-start, 2)} second(s)")
 
 sleep(5)
 
